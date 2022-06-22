@@ -4,6 +4,10 @@ const {graphqlHTTP} = require('express-graphql')
 
 const schema = require('./graphql-schema/schema');
 
+//* import {connectToDb, getDb} from './db'
+const {ObjectId} = require('mongodb');
+const {connectToDb, getDb} = require('./config/db')
+
 
 //* creates an express app
 const port = process.env.PORT || 4000
@@ -11,9 +15,6 @@ const app = express();
 app.use(express.json());
 app.use('/graphql', graphqlHTTP({schema, graphiql: true}))
 
-//* import {connectToDb, getDb} from './db'
-const {ObjectId} = require('mongodb');
-const {connectToDb, getDb} = require('./db')
 
 //* opens connection to the mongodb database before listening for request
 let db: any
