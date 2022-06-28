@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 app.use('/graphql', graphqlHTTP({schema, graphiql: true}))
 
-// opens connection to the mongodb database before listening for request
+//* opens connection to the mongodb database before listening for request
 connectDB().then(() => {
     app.listen(port, () => {
         console.log(`now listening to request from port ${port}`)

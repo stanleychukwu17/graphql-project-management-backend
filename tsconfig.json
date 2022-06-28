@@ -24,7 +24,7 @@
     // "useDefineForClassFields": true,                  /* Emit ECMAScript-standard-compliant class fields. */
 
     /* Modules */
-    "declaration": true,
+    "declaration": true,                                 /* Allows me to be able to export types from any file.d.ts.. I added this myself, it does not come by default with the ts config */
     "module": "commonjs",                                /* Specify what module code is generated. */
     // "rootDir": "./",                                  /* Specify the root folder within your source files. */
     // "moduleResolution": "node",                       /* Specify how TypeScript looks up a file from a given module specifier. */
