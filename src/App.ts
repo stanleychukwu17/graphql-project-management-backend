@@ -6,6 +6,8 @@ const connectDB = require('./config/db') // database connection
 
 //* creates an express app
 const port = process.env.PORT || 4000
+// console.log(port, process.env.PORT)
+
 const app = express();
 app.use(express.json());
 app.use('/graphql', graphqlHTTP({schema, graphiql: true}))
