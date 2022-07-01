@@ -1,12 +1,17 @@
 const graphql = require('graphql');
-const {GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt, GraphQLList, GraphQLSchema} = graphql;
-// const {getAllBooks, getAllAuthors} = require('../parser/functions')
-const { projects, clients } = require('./sampleData') // the fake database
-
-import {clientsType, projectsType} from '../types/types' //  types declarative for typescripts
 const ClientModel = require('../models/Client')
 const ProjectModel = require('../models/Project')
+import {clientsType, projectsType} from '../types/types' // types declarative for typescripts
 
+const {
+    GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt, GraphQLNonNull,
+    GraphQLList, GraphQLSchema
+} = graphql;
+
+
+
+
+// Belows are the types - first is the project type
 const ProjectType = new GraphQLObjectType({
     name: 'Project',
     fields: () => ({
@@ -24,6 +29,7 @@ const ProjectType = new GraphQLObjectType({
     })
 })
 
+// the clientType
 const ClientType = new GraphQLObjectType({
     name: 'Client',
     fields: () => ({
@@ -42,7 +48,7 @@ const ClientType = new GraphQLObjectType({
 })
 
 
-
+// the RootQueries
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
@@ -78,7 +84,31 @@ const RootQuery = new GraphQLObjectType({
     }
 })
 
+
+
+// Mutations
+const mutation = new GraphQLObjectType({
+    name: 'Mutation',
+    fields: {
+    // Add a client
+    addClient: {
+        type: ClientType,
+        args: {
+          name: { type: GraphQLNonNull(GraphQLString) },
+          email: { type: GraphQLNonNull(GraphQLString) },
+          phone: { type: GraphQLNonNull(GraphQLString) },
+        },
+        resolve(parent:{}, args:{name:string, email:string, phone:string}) {
+          const client = new ClientModel({name: args.name, email: args.email, phone: args.phone});
+          return client.save();
+        },
+      },
+    }
+})
+
+
 export {};
 module.exports = new GraphQLSchema({
-    query: RootQuery
+    query: RootQuery,
+    mutation
 })
