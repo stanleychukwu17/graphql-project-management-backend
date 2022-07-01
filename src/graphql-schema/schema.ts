@@ -5,7 +5,7 @@ import {clientsType, projectsType} from '../types/types' // types declarative fo
 
 const {
     GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt, GraphQLNonNull,
-    GraphQLList, GraphQLSchema
+    GraphQLList, GraphQLEnumType, GraphQLSchema
 } = graphql;
 
 
@@ -90,19 +90,108 @@ const RootQuery = new GraphQLObjectType({
 const mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
-    // Add a client
-    addClient: {
-        type: ClientType,
+        // Add a client
+        addClient: {
+            type: ClientType,
+            args: {
+                name: { type: GraphQLNonNull(GraphQLString) },
+                email: { type: GraphQLNonNull(GraphQLString) },
+                phone: { type: GraphQLNonNull(GraphQLString) }
+            },
+                resolve(parent:{}, args:{name:string, email:string, phone:string}) {
+                const client = new ClientModel({name: args.name, email: args.email, phone: args.phone});
+                return client.save();
+            },
+        },
+
+        // Delete a client
+        deleteClient: {
+            type: ClientType,
+            args: {
+                id: { type: GraphQLNonNull(GraphQLID) },
+            },
+            resolve(parent: {}, args: {id: string}) {
+                ProjectModel.find({ clientId: args.id }).then((projects:[]) => {
+                    projects.forEach((project: any) => {
+                    project.remove();
+                    });
+                });
+        
+                return ClientModel.findByIdAndRemove(args.id);
+            },
+        },
+
+        // Add a project
+        addProject: {
+            type: ProjectType,
+            args: {
+                name: {type: GraphQLNonNull(GraphQLString)},
+                description: {type: GraphQLNonNull(GraphQLString)},
+                status: {
+                    type: new GraphQLEnumType({
+                        name: 'ProjectStatus',
+                        values: {
+                            new: { value: 'Not Started' },
+                            progress: { value: 'In Progress' },
+                            completed: { value: 'Completed' },
+                        },
+                    }),
+                    defaultValue: 'Not Started',
+                },
+                clientId: { type: GraphQLNonNull(GraphQLID) },
+            },
+            resolve(parent: any, args: {name:string, description:string, status: string, clientId: string}) {
+                const project = new ProjectModel({name: args.name, description: args.description, status: args.status, clientId: args.clientId});
+                return project.save();
+            },
+        },
+
+        // Delete a project
+        deleteProject: {
+            type: ProjectType,
+            args: {
+                id: { type: GraphQLNonNull(GraphQLID) },
+            },
+            resolve(parent: [], args: {id: string}) {
+                return ProjectModel.findByIdAndRemove(args.id);
+            },
+        },
+
+    // Update a project
+    updateProject: {
+        type: ProjectType,
         args: {
-          name: { type: GraphQLNonNull(GraphQLString) },
-          email: { type: GraphQLNonNull(GraphQLString) },
-          phone: { type: GraphQLNonNull(GraphQLString) },
+            id: { type: GraphQLNonNull(GraphQLID) },
+            name: { type: GraphQLString },
+            description: { type: GraphQLString },
+            status: {
+                type: new GraphQLEnumType({
+                name: 'ProjectStatusUpdate',
+                values: {
+                    new: { value: 'Not Started' },
+                    progress: { value: 'In Progress' },
+                    completed: { value: 'Completed' },
+                },
+                }),
+            },
         },
-        resolve(parent:{}, args:{name:string, email:string, phone:string}) {
-          const client = new ClientModel({name: args.name, email: args.email, phone: args.phone});
-          return client.save();
+        resolve(parent: any, args: {id: string, name:string, description: string, status: string}) {
+          return ProjectModel.findByIdAndUpdate(
+            args.id,
+            {
+              $set: {
+                'name': args.name,
+                'description': args.description,
+                'status': args.status,
+              },
+            },
+            { new: true }
+          );
         },
-      },
+    },
+
+
+
     }
 })
 
