@@ -1,13 +1,11 @@
 const graphql = require('graphql');
 const ClientModel = require('../models/Client')
 const ProjectModel = require('../models/Project')
-import {clientsType, projectsType} from '../types/types' // types declarative for typescripts
 
 const {
     GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt, GraphQLNonNull,
     GraphQLList, GraphQLEnumType, GraphQLSchema
 } = graphql;
-
 
 
 
@@ -40,7 +38,6 @@ const ClientType = new GraphQLObjectType({
         allProjects: {
             'type': new GraphQLList(ProjectType),
             resolve (parent: any, args: {id: string}) {
-                console.log({clientId: parent.id})
                 return ProjectModel.find({clientId: parent.id})
             }
         }
@@ -157,41 +154,38 @@ const mutation = new GraphQLObjectType({
             },
         },
 
-    // Update a project
-    updateProject: {
-        type: ProjectType,
-        args: {
-            id: { type: GraphQLNonNull(GraphQLID) },
-            name: { type: GraphQLString },
-            description: { type: GraphQLString },
-            status: {
-                type: new GraphQLEnumType({
-                name: 'ProjectStatusUpdate',
-                values: {
-                    new: { value: 'Not Started' },
-                    progress: { value: 'In Progress' },
-                    completed: { value: 'Completed' },
+        // Update a project
+        updateProject: {
+            type: ProjectType,
+            args: {
+                id: { type: GraphQLNonNull(GraphQLID) },
+                name: { type: GraphQLString },
+                description: { type: GraphQLString },
+                status: {
+                    type: new GraphQLEnumType({
+                    name: 'ProjectStatusUpdate',
+                    values: {
+                        new: { value: 'Not Started' },
+                        progress: { value: 'In Progress' },
+                        completed: { value: 'Completed' },
+                    },
+                    }),
                 },
-                }),
             },
-        },
-        resolve(parent: any, args: {id: string, name:string, description: string, status: string}) {
-          return ProjectModel.findByIdAndUpdate(
-            args.id,
-            {
-              $set: {
-                'name': args.name,
-                'description': args.description,
-                'status': args.status,
-              },
+            resolve(parent: any, args: {id: string, name:string, description: string, status: string}) {
+            return ProjectModel.findByIdAndUpdate(
+                args.id,
+                {
+                $set: {
+                    'name': args.name,
+                    'description': args.description,
+                    'status': args.status,
+                },
+                },
+                { new: true }
+            );
             },
-            { new: true }
-          );
-        },
-    },
-
-
-
+        }
     }
 })
 
