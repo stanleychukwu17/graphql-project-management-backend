@@ -1,5 +1,5 @@
-import Clients from '../components/Clients';
-import Projects from '../components/Projects';
+import Clients from '../components/Clients'; // not_needed
+import Projects from '../components/Projects'; // not_needed
 import AddClientModal from '../components/AddClientModal';
 import AddProjectModal from '../components/AddProjectModal';
 
