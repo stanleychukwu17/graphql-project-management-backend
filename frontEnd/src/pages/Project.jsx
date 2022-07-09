@@ -1,6 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
-import Spinner from '../components/Spinner';
-import ClientInfo from '../components/ClientInfo';
+import Spinner from '../components/Spinner'; // not_needed
+import ClientInfo from '../components/ClientInfo'; // not_needed
 import DeleteProjectButton from '../components/DeleteProjectButton';
 import EditProjectForm from '../components/EditProjectForm';
 
