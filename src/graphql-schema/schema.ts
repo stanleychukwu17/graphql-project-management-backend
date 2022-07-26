@@ -95,7 +95,7 @@ const mutation = new GraphQLObjectType({
                 email: { type: GraphQLNonNull(GraphQLString) },
                 phone: { type: GraphQLNonNull(GraphQLString) }
             },
-                resolve(parent:{}, args:{name:string, email:string, phone:string}) {
+            resolve(parent:{}, args:{name:string, email:string, phone:string}) {
                 const client = new ClientModel({name: args.name, email: args.email, phone: args.phone});
                 return client.save();
             },
@@ -190,7 +190,7 @@ const mutation = new GraphQLObjectType({
 })
 
 
-export {};
+export {}; // to appease the god's of typescript
 module.exports = new GraphQLSchema({
     query: RootQuery,
     mutation
